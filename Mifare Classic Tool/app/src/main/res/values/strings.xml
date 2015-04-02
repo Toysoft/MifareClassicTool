@@ -147,8 +147,6 @@
     <string name="text_b">B:</string>
     <string name="text_dump_from_editor">Dump from Editor</string>
     <string name="text_incr_decr_value_block">Incr./Decr. Value Block</string>
-    <string name="text_increment">Increment</string>
-    <string name="text_decrement">Decrement</string>
     <!-- Has to be 32 chars long. The text should be centered. -->
     <string name="text_identical_data">-----------Identical------------</string>
     <string name="text_only_in_dump1">Sector occurs only in dump 1 (A)</string>
@@ -231,6 +229,11 @@
     <string name="action_chose_dump">Choose a Dump&#8230;</string>
     <string name="action_continue">Continue</string>
     <string name="action_dont_save">Don\'t Save</string>
+    <string name="action_increment">Increment</string>
+    <string name="action_decrement">Decrement</string>
+    <string name="action_incr_decr_and_transfer">Incr./Decr. and transfer</string>
+    <string name="action_transfer_only">Transfer only</string>
+    <string name="action_restore_only">Restore only</string>
 
     <!-- Toast messages -->
     <string name="info_new_tag_found">New tag found</string>

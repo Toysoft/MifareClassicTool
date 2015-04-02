@@ -50,6 +50,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +86,13 @@ public class WriteTag extends BasicActivity {
     private EditText mBlockTextVB;
     private EditText mNewValueTextVB;
     private RadioButton mIncreaseVB;
+    private RadioButton mDecreaseVB;
+    /**
+     * 0 = Increment/Decrement and transfer.
+     * 1 = Transfer only.
+     * 2 = Restore only.
+     */
+    private int mValueBlockWriteMode;
     private EditText mStaticAC;
     private ArrayList<View> mWriteModeLayouts;
     private CheckBox mWriteManufBlock;
@@ -123,6 +131,8 @@ public class WriteTag extends BasicActivity {
                 R.id.checkBoxWriteTagDumpStaticAC);
         mWriteManufBlock = (CheckBox) findViewById(
                 R.id.checkBoxWriteTagDumpWriteManuf);
+        mDecreaseVB = (RadioButton) findViewById(
+                R.id.radioButtonWriteTagWriteValueBlockDecr);
 
         mWriteModeLayouts = new ArrayList<View>();
         mWriteModeLayouts.add(findViewById(
@@ -1260,5 +1270,29 @@ public class WriteTag extends BasicActivity {
         Toast.makeText(this, R.string.info_write_successful,
                 Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    // TODO: doc.
+    public void onChangeValueBlockMode(View view) {
+        String tag = (String) view.getTag();
+        if (tag.equals("incr_decr_and_transfer")) {
+            // Increment/Decrement and transfer.
+            mIncreaseVB.setEnabled(true);
+            mDecreaseVB.setEnabled(true);
+            mNewValueTextVB.setEnabled(true);
+            mValueBlockWriteMode = 0;
+        } else if (tag.equals("transfer_only")) {
+            // Transfer only.
+            mIncreaseVB.setEnabled(false);
+            mDecreaseVB.setEnabled(false);
+            mNewValueTextVB.setEnabled(false);
+            mValueBlockWriteMode = 1;
+        } else {
+            // Restore only.
+            mIncreaseVB.setEnabled(false);
+            mDecreaseVB.setEnabled(false);
+            mNewValueTextVB.setEnabled(false);
+            mValueBlockWriteMode = 2;
+        }
     }
 }

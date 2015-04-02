@@ -464,31 +464,73 @@
                     android:id="@+id/editTextWriteTagValueBlockValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
                     android:layout_alignLeft="@+id/editTextWriteTagValueBlockBlock"
                     android:layout_below="@id/editTextWriteTagValueBlockBlock"
                     android:inputType="number"
                     android:maxLength="10"
                     android:minEms="7" />
 
-
                 <RadioGroup
                     android:id="@+id/radioGroupWriteTagValueBlock"
                     android:layout_below="@id/textViewWriteTagValueBlockValue"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:background="@xml/layout_border" >
 
                     <RadioButton
                         android:id="@+id/radioButtonWriteTagWriteValueBlockIncr"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/text_increment"
+                        android:text="@string/action_increment"
                         android:checked="true" />
 
                     <RadioButton
                         android:id="@+id/radioButtonWriteTagWriteValueBlockDecr"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/text_decrement" />
+                        android:text="@string/action_decrement" />
+
+                </RadioGroup>
+
+                <!-- Seperator -->
+                <View
+                    android:id="@+id/viewWriteTagValueBlockSeperator"
+                    android:layout_below="@id/radioGroupWriteTagValueBlock"
+                    android:layout_width="fill_parent"
+                    android:layout_height="5dp" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroupWriteTagValueBlockOptions"
+                    android:layout_below="@id/viewWriteTagValueBlockSeperator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@xml/layout_border" >
+
+                    <RadioButton
+                        android:id="@+id/radioButtonWriteTagWriteValueBlockTransfer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_incr_decr_and_transfer"
+                        android:onClick="onChangeValueBlockMode"
+                        android:tag="incr_decr_and_transfer"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioButtonWriteTagWriteValueBlockDecrTransferOnly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_transfer_only"
+                        android:onClick="onChangeValueBlockMode"
+                        android:tag="transfer_only" />
+
+                    <RadioButton
+                        android:id="@+id/radioButtonWriteTagWriteValueBlockDecrRestoreOnly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_restore_only"
+                        android:onClick="onChangeValueBlockMode"
+                        android:tag="restore_only" />
 
                 </RadioGroup>
 
@@ -496,7 +538,7 @@
                     android:id="@+id/buttonWriteTagValueBlock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/radioGroupWriteTagValueBlock"
+                    android:layout_below="@+id/radioGroupWriteTagValueBlockOptions"
                     android:onClick="onWriteValue"
                     android:text="@string/action_write_value_block" />
             </RelativeLayout>
