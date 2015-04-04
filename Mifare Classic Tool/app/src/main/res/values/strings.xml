@@ -82,7 +82,7 @@
     <string name="text_factory_format_info">Try to format the tag to
         factory/delivery state.</string>
     <string name="text_incr_decr_value_block_info">Increment or decrement
-        a Value Block. (If you don\'t know what Value Blocks are, checkout
+        a Value Block. (If you don\'t know what Value Blocks are, check out
         \"Help and Info\".) </string>
     <string name="text_starting_at_0">(Starting at 0)</string>
     <string name="text_open_key_file_title">Open or Create a Key File</string>
@@ -232,8 +232,7 @@
     <string name="action_increment">Increment</string>
     <string name="action_decrement">Decrement</string>
     <string name="action_incr_decr_and_transfer">Incr./Decr. and transfer</string>
-    <string name="action_transfer_only">Transfer only</string>
-    <string name="action_restore_only">Restore only</string>
+    <string name="action_restore_and_transfer">Restore and transfer</string>
 
     <!-- Toast messages -->
     <string name="info_new_tag_found">New tag found</string>
@@ -279,6 +278,10 @@
         or not writable with keys from key file</string>
     <string name="info_error_writing_value_block">Error: Not a Value Block,
           insufficient rights or incorrect value</string>
+    <string name="info_error_transfer_value_block">Error: Could not transfer
+        Value Block</string>
+    <string name="info_error_restore_value_block">Error: Could not restore
+        Value Block</string>
     <string name="info_write_successful">Data successfully written</string>
     <string name="info_none_key_valid_for_reading">Error: None of the
         keys were valid for reading</string>
@@ -327,6 +330,7 @@
         (block 0)</string>
     <string name="info_not_vb">Error: Selected block is not a Value Block</string>
     <string name="info_value_too_big">Error: The value is too big</string>
+    <string name="info_no_value">Error: Please enter a value</string>
 
     <!-- Dialog messages -->
     <string name="dialog_no_nfc">No NFC hardware was found on your device.

@@ -508,7 +508,7 @@
                     android:background="@xml/layout_border" >
 
                     <RadioButton
-                        android:id="@+id/radioButtonWriteTagWriteValueBlockTransfer"
+                        android:id="@+id/radioButtonWriteTagWriteValueBlockIncrDecrAndTransfer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/action_incr_decr_and_transfer"
@@ -517,20 +517,12 @@
                         android:checked="true" />
 
                     <RadioButton
-                        android:id="@+id/radioButtonWriteTagWriteValueBlockDecrTransferOnly"
+                        android:id="@+id/radioButtonWriteTagWriteValueBlockRestoreAndTransfer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/action_transfer_only"
+                        android:text="@string/action_restore_and_transfer"
                         android:onClick="onChangeValueBlockMode"
-                        android:tag="transfer_only" />
-
-                    <RadioButton
-                        android:id="@+id/radioButtonWriteTagWriteValueBlockDecrRestoreOnly"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_restore_only"
-                        android:onClick="onChangeValueBlockMode"
-                        android:tag="restore_only" />
+                        android:tag="restore_and_transfer" />
 
                 </RadioGroup>
 

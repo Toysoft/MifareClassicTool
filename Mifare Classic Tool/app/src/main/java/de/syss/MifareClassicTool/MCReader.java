@@ -295,6 +295,7 @@ public class MCReader {
         return 0;
     }
 
+    // TODO: update doc.
     /**
      * Increase or decrease a Value Block.
      * @param sectorIndex The sector to where the data should be written
@@ -334,12 +335,35 @@ public class MCReader {
             } else {
                 mMFC.decrement(block, value);
             }
-            mMFC.transfer(block);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error while writing Value Block to tag.", e);
             return -1;
         }
         return 0;
+    }
+
+    // TODO: doc.
+    public boolean transferValueBlock(int sectorIndex, int blockIndex,
+            byte[] key, boolean useAsKeyB) {
+        try {
+            mMFC.transfer(mMFC.sectorToBlock(sectorIndex) + blockIndex);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error while transfering Value Block to tag.", e);
+            return false;
+        }
+        return true;
+    }
+
+    // TODO: doc.
+    public boolean restoreValueBlock(int sectorIndex, int blockIndex,
+            byte[] key, boolean useAsKeyB) {
+        try {
+            mMFC.restore(mMFC.sectorToBlock(sectorIndex) + blockIndex);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error while restoring Value Block to tag.", e);
+            return false;
+        }
+        return true;
     }
 
     /**

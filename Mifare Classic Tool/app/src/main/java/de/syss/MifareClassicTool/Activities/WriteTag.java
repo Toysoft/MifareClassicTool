@@ -89,8 +89,9 @@ public class WriteTag extends BasicActivity {
     private RadioButton mDecreaseVB;
     /**
      * 0 = Increment/Decrement and transfer.
-     * 1 = Transfer only.
-     * 2 = Restore only.
+     * 1 = Increment/Decrement only.
+     * 2 = Transfer only.
+     * 3 = Restore only.
      */
     private int mValueBlockWriteMode;
     private EditText mStaticAC;
@@ -1184,6 +1185,7 @@ public class WriteTag extends BasicActivity {
         checkTag();
     }
 
+    // TODO: update doc.
     /**
      * Check the user input and (if correct) show the
      * {@link KeyMapCreator} with predefined mapping range
@@ -1210,18 +1212,29 @@ public class WriteTag extends BasicActivity {
             return;
         }
 
-        try {
-            Integer.parseInt(mNewValueTextVB.getText().toString());
-        } catch (Exception e) {
-            // Error. Value is too big.
-            Toast.makeText(this, R.string.info_value_too_big,
-                    Toast.LENGTH_LONG).show();
-            return;
+        if (mValueBlockWriteMode == 0) {
+            // Write Value block and transfer.
+            String value = mNewValueTextVB.getText().toString();
+            if (value == null || value.equals("")) {
+                // Error. No value given.
+                Toast.makeText(this, R.string.info_no_value,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                Integer.parseInt(value);
+            } catch (Exception e) {
+                // Error. Value is too big.
+                Toast.makeText(this, R.string.info_value_too_big,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
         }
 
         createKeyMapForBlock(sector, true);
     }
 
+    // TODO: update doc., update error message.
     /**
      * Called from {@link #onActivityResult(int, int, Intent)}
      * after a key map was created, this method tries to increment or
@@ -1236,37 +1249,96 @@ public class WriteTag extends BasicActivity {
         if (reader == null) {
             return;
         }
-        int value = Integer.parseInt(mNewValueTextVB.getText().toString());
         int sector = Integer.parseInt(mSectorTextVB.getText().toString());
         int block = Integer.parseInt(mBlockTextVB.getText().toString());
         byte[][] keys = Common.getKeyMap().get(sector);
         int result = -1;
+        boolean transferResult = false;
+        boolean restoreResult = false;
+        if (mValueBlockWriteMode == 0) {
+            // Write Value Block and transfer.
+            int value = Integer.parseInt(mNewValueTextVB.getText().toString());
+            if (keys[1] != null) {
+                result = reader.writeValueBlock(sector, block, value,
+                        mIncreaseVB.isChecked(),
+                        keys[1], true);
+            }
+            // Error while writing? Maybe tag has default factory settings ->
+            // try to write with key a (if there is one).
+            if (result == -1 && keys[0] != null) {
+                // Increment/Decrement.
+                result = reader.writeValueBlock(sector, block, value,
+                        mIncreaseVB.isChecked(),
+                        keys[0], false);
+                if (result == 0) {
+                    // Transfer.
+                    transferResult = reader.transferValueBlock(sector, block,
+                            keys[0], false);
+                }
+            } else if (result == 0) {
+                // Transfer.
+                 transferResult = reader.transferValueBlock(sector, block,
+                         keys[1], true);
+            }
+        } else if (mValueBlockWriteMode == 1) {
+            // Restore and transfer.
+            if (keys[1] != null) {
+                restoreResult = reader.restoreValueBlock(sector, block,
+                        keys[1], true);
+            }
+            // Error while writing? Maybe tag has default factory settings ->
+            // try to write with key a (if there is one).
+            if (!restoreResult && keys[0] != null) {
+                restoreResult = reader.restoreValueBlock(sector, block,
+                        keys[0], false);
+            }
 
-        if (keys[1] != null) {
-            result = reader.writeValueBlock(sector, block, value,
-                    mIncreaseVB.isChecked(),
-                    keys[1], true);
+            if (restoreResult && keys[1] != null) {
+                transferResult = reader.transferValueBlock(sector, block,
+                        keys[1], true);
+            }
+            // Error while writing? Maybe tag has default factory settings ->
+            // try to write with key a (if there is one).
+            if (restoreResult && !transferResult && keys[0] != null) {
+                transferResult = reader.transferValueBlock(sector, block,
+                        keys[0], false);
+            }
         }
-        // Error while writing? Maybe tag has default factory settings ->
-        // try to write with key a (if there is one).
-        if (result == -1 && keys[0] != null) {
-            result = reader.writeValueBlock(sector, block, value,
-                    mIncreaseVB.isChecked(),
-                    keys[0], false);
-        }
+
         reader.close();
 
         // Error handling.
-        switch (result) {
-            case 2:
-                Toast.makeText(this, R.string.info_block_not_in_sector,
+        if (mValueBlockWriteMode == 0) {
+            switch (result) {
+                case 2:
+                    Toast.makeText(this, R.string.info_block_not_in_sector,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                case -1:
+                    Toast.makeText(this, R.string.info_error_writing_value_block,
+                            Toast.LENGTH_LONG).show();
+                    return;
+            }
+            if (mValueBlockWriteMode == 0 && !transferResult) {
+                // Error. Error during transfer.
+                Toast.makeText(this, R.string.info_error_transfer_value_block,
                         Toast.LENGTH_LONG).show();
                 return;
-            case -1:
-                Toast.makeText(this, R.string.info_error_writing_value_block,
+            }
+        } else if (mValueBlockWriteMode == 1) {
+            if (!restoreResult) {
+                // Error. Error during restore.
+                Toast.makeText(this, R.string.info_error_restore_value_block,
                         Toast.LENGTH_LONG).show();
                 return;
+            } else if (!transferResult) {
+                // Error. Error during transfer.
+                Toast.makeText(this, R.string.info_error_transfer_value_block,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
         }
+
         Toast.makeText(this, R.string.info_write_successful,
                 Toast.LENGTH_LONG).show();
         finish();
@@ -1275,24 +1347,19 @@ public class WriteTag extends BasicActivity {
     // TODO: doc.
     public void onChangeValueBlockMode(View view) {
         String tag = (String) view.getTag();
+        boolean enableState = true;
         if (tag.equals("incr_decr_and_transfer")) {
             // Increment/Decrement and transfer.
-            mIncreaseVB.setEnabled(true);
-            mDecreaseVB.setEnabled(true);
-            mNewValueTextVB.setEnabled(true);
+            enableState = true;
             mValueBlockWriteMode = 0;
-        } else if (tag.equals("transfer_only")) {
-            // Transfer only.
-            mIncreaseVB.setEnabled(false);
-            mDecreaseVB.setEnabled(false);
-            mNewValueTextVB.setEnabled(false);
+        } else if (tag.equals("restore_and_transfer")) {
+            // Increment/Decrement only.
+            enableState = false;
             mValueBlockWriteMode = 1;
-        } else {
-            // Restore only.
-            mIncreaseVB.setEnabled(false);
-            mDecreaseVB.setEnabled(false);
-            mNewValueTextVB.setEnabled(false);
-            mValueBlockWriteMode = 2;
         }
+
+        mIncreaseVB.setEnabled(enableState);
+        mDecreaseVB.setEnabled(enableState);
+        mNewValueTextVB.setEnabled(enableState);
     }
 }
